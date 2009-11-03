@@ -1,0 +1,6 @@
+From: Jiang Xin <worldhello.net@gmail.com>
+Subject: [PATCH] t/git-multi-branch
+
+缺省只是从 master 分支查看和导入提交信息到 changesets。需要支持全部的 branches 和 tags。
+
+Signed-off-by: Jiang Xin <worldhello.net@gmail.com>
