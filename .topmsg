@@ -1,0 +1,6 @@
+From: Jiang Xin <worldhello.net@gmail.com>
+Subject: [PATCH] t/hg-version-hang-up-bugfix
+
+如果 locales 为中文，导致代码获取 hg --version 时输出为中文，匹配出现错误。
+
+Signed-off-by: Jiang Xin <worldhello.net@gmail.com>

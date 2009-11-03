@@ -44,6 +44,7 @@ module Redmine
           end
           
           def hgversion_from_command_line
+            ENV["LANGUAGE"] = "C"
             %x{#{HG_BIN} --version}.match(/\(version (.*)\)/)[1]
           end
           
