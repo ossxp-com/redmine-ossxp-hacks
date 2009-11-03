@@ -1,0 +1,6 @@
+From: Wang Sheng <wangsheng@bj.ossxp.com>
+Subject: [PATCH] t/global-config-custom
+
+修改缺省配置。如：缺省语种为中文.
+
+Signed-off-by: Wang Sheng <wangsheng@bj.ossxp.com>
