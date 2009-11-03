@@ -25,21 +25,46 @@ module Redmine
         # Git executable name
         GIT_BIN = "git"
 
+        ## Refs may have / in it. for example, topgit always use branch name such as t/branch/name
+        ## by Jiang Xin <jiangxin AT ossxp.com>
+        def parse_refs(treepath)
+            if treepath =~ /^refs\/([^\/]+)\/([^\/]+)(\/.*)?$/
+                type = $1
+                tree = $2
+                path = $3 || ''
+                if path
+                    path=path[1..-1]
+                end
+                cmd="#{GIT_BIN} --git-dir #{target('')} rev-parse #{type}/#{tree} >/dev/null 2>&1"
+                system(cmd)
+                while $?.exitstatus != 0 and path
+                    tree_extra, path = path.split('/',2)
+                    tree = "#{tree}/#{tree_extra}"
+                    cmd="#{GIT_BIN} --git-dir #{target('')} rev-parse #{type}/#{tree} >/dev/null 2>&1"
+                    system(cmd)
+                end
+                if $?.exitstatus == 0
+                    return type, tree, path
+                end
+            end
+            return '', '', treepath
+        end
+
         # Get the revision of a particuliar file
         def get_rev (rev,treepath)
-	    if treepath =~ /^refs\/([^\/]+)\/([^\/]+)\/(.*)$/
-	      type = $1
-	      tree = $2
-	      path = $3
-	      type_tree = "#{type}/#{tree}"
-	    else
-	      path ||= ''
-	      type_tree ||= '' 
-	      #return nil
-	    end
+          type_tree ||= '' 
+	      path ||= '' 
+          type, tree, node_path = parse_refs(treepath)
+          if type and tree
+	          type_tree = "#{type}/#{tree}"
+              path = node_path
+          end
 	    if rev != 'latest' && !rev.nil?
 	      #cmd="#{GIT_BIN} --git-dir #{target('')} show --raw --date=iso --pretty=fuller  #{shell_quote rev} #{shell_quote type_tree} -- #{shell_quote path}" 
-	      cmd="#{GIT_BIN} --git-dir #{target('')} show --raw --date=iso --pretty=fuller -1 #{shell_quote rev} -- #{shell_quote path}" 
+	      cmd="#{GIT_BIN} --git-dir #{target('')} show --raw --date=iso --pretty=fuller -1 #{shell_quote rev}" 
+          if path
+              cmd += " -- #{shell_quote path}"
+          end
 	    else
 	      #@branch ||= shellout("#{GIT_BIN} --git-dir #{target('')} branch") { |io| io.grep(/\*/)[0].strip.match(/\* (.*)/)[1] }
 	      cmd="#{GIT_BIN} --git-dir #{target('')} log --raw --date=iso --pretty=fuller -1 #{type_tree} -- #{shell_quote path}" 
@@ -118,16 +143,15 @@ module Redmine
         end
         
         def entries(treepath=nil, identifier=nil)
-	  treepath ||= ''
-	    if treepath =~ /^refs\/([^\/]+)\/([^\/]+)\/(.*)$/
-	      type = $1
-	      tree = $2
-	      path = $3
-	    else
-	      type = "heads"
-	      tree = "master"
-	      path = '' 
-	    end
+          treepath ||= ''
+          type, tree, node_path = parse_refs(treepath)
+          if type and tree
+              path = node_path
+          else
+              type = "heads"
+              tree = "master"
+              path = '' 
+          end
 	    path ||= ''
 	    entries = Entries.new
 	    if !treepath.empty?
@@ -180,16 +204,14 @@ module Redmine
         
         def revisions(treepath, identifier_from, identifier_to, options={})
           revisions = Revisions.new
-	  treepath ||= ''
-	    if treepath =~ /^refs\/([^\/]+)\/([^\/]+)\/(.*)$/
-	      type = $1
-	      tree = $2
-	      path = $3
-	      type_tree = "#{type}/#{tree}"
-	    else
+          treepath ||= ''
+          type_tree ||= '' 
 	      path ||= '' 
-	      type_tree ||= ''
-	    end
+          type, tree, node_path = parse_refs(treepath)
+          if type and tree
+	          type_tree = "#{type}/#{tree}"
+              path = node_path
+	      end
 	      cmd = "#{GIT_BIN} --git-dir #{target('')} for-each-ref --format=#{shell_quote('%(objectname) %(objecttype) %(refname)')} refs"
 	      shellout(cmd)  do |io|
 		io.each_line do |line|
@@ -280,18 +302,17 @@ module Redmine
         end
         
         def diff(treepath, identifier_from, identifier_to=nil)
-	  treepath ||= ''
-	  if treepath =~ /^refs\/([^\/]+)\/([^\/]+)\/(.*)$/
-	    type = $1
-	    tree = $2
-	    path = $3
-	    type_tree = "#{type}/#{tree}"
-	  else
-	    type = "heads"
-	    tree = "master"
-	    path ||= '' 
-	    type_tree = 'heads/master'
-	  end
+          treepath ||= ''
+	      path ||= '' 
+          type, tree, node_path = parse_refs(treepath)
+          if type and tree
+	          type_tree = "#{type}/#{tree}"
+              path = node_path
+          else
+            type = "heads"
+            tree = "master"
+            type_tree = 'heads/master'
+          end
           if !identifier_to
             identifier_to = nil
           end
@@ -310,18 +331,17 @@ module Redmine
         end
         
         def annotate(treepath, identifier=nil)
-	  treepath ||= ''
-	  if treepath =~ /^refs\/([^\/]+)\/([^\/]+)\/(.*)$/
-	    type = $1
-	    tree = $2
-	    path = $3
-	    type_tree = "#{type}/#{tree}"
-	  else
-	    type = "heads"
-	    tree = "master"
-	    path = '' 
-	    type_tree = 'heads/master'
-	  end
+          treepath ||= ''
+          type, tree, node_path = parse_refs(treepath)
+          if type and tree
+	          type_tree = "#{type}/#{tree}"
+              path = node_path
+          else
+              type = "heads"
+              tree = "master"
+              path = '' 
+              type_tree = 'heads/master'
+          end
           identifier = 'HEAD' if identifier.blank?
           cmd = "#{GIT_BIN} --git-dir #{target('')} blame -l #{shell_quote identifier} -- #{shell_quote path}"
           blame = Annotate.new
@@ -338,18 +358,17 @@ module Redmine
         end
         
         def cat(treepath, identifier=nil)
-	  treepath ||= ''
-	  if treepath =~ /^refs\/([^\/]+)\/([^\/]+)\/(.*)$/
-	    type = $1
-	    tree = $2
-	    path = $3
-	    type_tree = "#{type}/#{tree}"
-	  else
-	    type = "heads"
-	    tree = "master"
-	    path = '' 
-	    type_tree = 'heads/master'
-	  end
+          treepath ||= ''
+          type, tree, node_path = parse_refs(treepath)
+          if type and tree
+	          type_tree = "#{type}/#{tree}"
+              path = node_path
+          else
+              type = "heads"
+              tree = "master"
+              path = '' 
+              type_tree = 'heads/master'
+          end
           if identifier.nil?
             identifier = 'HEAD'
           end
