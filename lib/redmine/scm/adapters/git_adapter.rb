@@ -24,6 +24,23 @@ module Redmine
         
         # Git executable name
         GIT_BIN = "git"
+        
+        def check_revision(rev, many=true)
+          rev='' if rev.nil?
+          cmd="#{GIT_BIN} --git-dir #{target('')} rev-parse #{shell_quote rev}"
+          newrev='HEAD' unless many
+          newrev='--all' if many
+          shellout(cmd) do |io|
+            io.each_line do |line|
+              if line =~ /^([0-9a-f]{40})$/
+                newrev=$1 unless many
+                newrev=rev if many
+                break
+              end
+            end
+          end
+          newrev || 'HEAD'
+        end
 
         ## Refs may have / in it. for example, topgit always use branch name such as t/branch/name
         ## by Jiang Xin <jiangxin AT ossxp.com>
@@ -69,6 +86,11 @@ module Redmine
 	      #@branch ||= shellout("#{GIT_BIN} --git-dir #{target('')} branch") { |io| io.grep(/\*/)[0].strip.match(/\* (.*)/)[1] }
 	      cmd="#{GIT_BIN} --git-dir #{target('')} log --raw --date=iso --pretty=fuller -1 #{type_tree} -- #{shell_quote path}" 
 	    end
+        
+        rev=check_revision(rev)
+        path='' if path.nil?
+        cmd="#{GIT_BIN} --git-dir #{target('')} log --raw --date=iso --pretty=fuller --decorate -1 #{shell_quote rev} -- #{shell_quote path}" 
+ 
 	    rev=[]
 	    i=0
 	    shellout(cmd) do |io|
@@ -77,12 +99,12 @@ module Redmine
 	      parsing_descr = 0  #0: not parsing desc or files, 1: parsing desc, 2: parsing files
 
 	      io.each_line do |line|
-		if line =~ /^commit ([0-9a-f]{40})$/
+          if line =~ /^commit ([0-9a-f]{40})? ?(.*)$/
 		  key = "commit"
 		  value = $1
 		  if (parsing_descr == 1 || parsing_descr == 2)
 		    parsing_descr = 0
-		    rev = Revision.new({:identifier => changeset[:commit],
+		    rev = Revision.new({:identifier => changeset[:identifier],
 					:scmid => changeset[:commit],
 					:author => changeset[:author],
 					:time => Time.parse(changeset[:date]),
@@ -93,6 +115,8 @@ module Redmine
 		    files = []
 		  end
 		  changeset[:commit] = $1
+          changeset[:identifier] = $1
+          changeset[:name] = ($2 != '') ? $2 : $1
 		elsif (parsing_descr == 0) && line =~ /^(\w+):\s*(.*)$/
 		  key = $1
 		  value = $2
@@ -115,7 +139,7 @@ module Redmine
 		  changeset[:description] << line
 		end
 	      end	
-	      rev = Revision.new({:identifier => changeset[:commit],
+	      rev = Revision.new({:identifier => changeset[:identifier],
 				  :scmid => changeset[:commit],
 				  :author => changeset[:author],
 				  :time => (changeset[:date] ? Time.parse(changeset[:date]) : nil),
@@ -132,9 +156,9 @@ module Redmine
         end
 
         def info
-          revs = revisions(url,nil,nil,{:limit => 1})
+          revs = revisions('','--all',nil,{:limit => 1})
           if revs && revs.any?
-            Info.new(:root_url => url, :lastrev => revs.first)
+            Info.new(:root_url => '', :lastrev => revs.first)
           else
             nil
           end
@@ -143,6 +167,7 @@ module Redmine
         end
         
         def entries(treepath=nil, identifier=nil)
+          identifier=check_revision(identifier, false)
           treepath ||= ''
           type, tree, node_path = parse_refs(treepath)
           if type and tree
@@ -204,6 +229,8 @@ module Redmine
         
         def revisions(treepath, identifier_from, identifier_to, options={})
           revisions = Revisions.new
+          identifier_from=check_revision(identifier_from) if identifier_from
+          identifier_to=check_revision(identifier_to) if identifier_to
           treepath ||= ''
           type_tree ||= '' 
 	      path ||= '' 
@@ -222,10 +249,12 @@ module Redmine
 
 		    cmd = "#{GIT_BIN} --git-dir #{target('')} log --raw --date=iso --pretty=fuller"
 		    cmd << " --reverse" if options[:reverse]
+            cmd << " --decorate" #if options[:decorate]
 		    cmd << " -n #{options[:limit].to_i} " if (!options.nil?) && options[:limit]
-		    cmd << " #{shell_quote(identifier_from + '..')} " if identifier_from
+            cmd << " #{shell_quote(identifier_from)} " if identifier_from
 		    cmd << " #{shell_quote identifier_to} " if identifier_to
 		    cmd << " #{shell_quote refname} " if identifier_from.nil? && identifier_to.nil?
+            cmd << " -- #{shell_quote path}" if path
 		    shellout(cmd) do |io|
 		      files=[]
 		      changeset = {}
@@ -233,12 +262,12 @@ module Redmine
 		      revno = 1
 
 		      io.each_line do |line|
-			if line =~ /^commit ([0-9a-f]{40})$/
+              if line =~ /^commit ([0-9a-f]{40})? ?(.*)$/
 			  key = "commit"
 			  value = $1
 			  if (parsing_descr == 1 || parsing_descr == 2)
 			    parsing_descr = 0
-			    revision = Revision.new({:identifier => changeset[:commit],
+			    revision = Revision.new({:identifier => changeset[:identifier],
 						     :scmid => changeset[:commit],
 						     :author => changeset[:author],
 						     :time => Time.parse(changeset[:date]),
@@ -255,6 +284,8 @@ module Redmine
 			    revno = revno + 1
 			  end
 			  changeset[:commit] = $1
+              changeset[:identifier] = $1
+              changeset[:name] = ($2 != '') ? $2 : $1
 			elsif (parsing_descr == 0) && line =~ /^(\w+):\s*(.*)$/
 			  key = $1
 			  value = $2
@@ -279,7 +310,7 @@ module Redmine
 		      end	
 
 		      if changeset[:commit]
-			revision = Revision.new({:identifier => changeset[:commit],
+			revision = Revision.new({:identifier => changeset[:identifier],
 						 :scmid => changeset[:commit],
 						 :author => changeset[:author],
 						 :time => Time.parse(changeset[:date]),
@@ -316,6 +347,8 @@ module Redmine
           if !identifier_to
             identifier_to = nil
           end
+          identifier_from=check_revision(identifier_from, false)
+          identifier_to=check_revision(identifier_to, false) if !identifier_to.nil?
           
           cmd = "#{GIT_BIN} --git-dir #{target('')} show #{shell_quote identifier_from}" if identifier_to.nil?
           cmd = "#{GIT_BIN} --git-dir #{target('')} diff #{shell_quote identifier_to} #{shell_quote identifier_from}" if !identifier_to.nil?
@@ -342,7 +375,7 @@ module Redmine
               path = '' 
               type_tree = 'heads/master'
           end
-          identifier = 'HEAD' if identifier.blank?
+          identifier=check_revision(identifier, false)
           cmd = "#{GIT_BIN} --git-dir #{target('')} blame -l #{shell_quote identifier} -- #{shell_quote path}"
           blame = Annotate.new
           content = nil

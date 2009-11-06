@@ -1,6 +1,9 @@
-From: Jiang Xin <worldhello.net@gmail.com>
-Subject: [PATCH] t/git-multi-branch
+From: Wang Sheng <wangsheng@bj.ossxp.com>
+Subject: [PATCH] t/git-fetch-all-revs
 
-缺省只是从 master 分支查看和导入提交信息到 changesets。需要支持全部的 branches 和 tags。
+只有主线的提交入库，分支提交不能入库。导致下列问题
 
-Signed-off-by: Jiang Xin <worldhello.net@gmail.com>
+* 浏览版本，查看分支的修改，显示无此版本
+* Git代码库的提交（分支的改动），不能和跟踪的问题相关联
+        
+Signed-off-by: Wang Sheng <wangsheng@bj.ossxp.com>
