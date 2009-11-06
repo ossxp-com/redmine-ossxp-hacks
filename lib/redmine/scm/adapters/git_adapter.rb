@@ -190,7 +190,7 @@ module Redmine
                                         :kind => 'dir',
                                         :size => nil,
                                         :lastrev => get_rev(sha,(path.empty? ? refname : "#{path}/#{refname}")) 
-                                      }) unless entries.detect{|entry| entry.name == refname}
+                                      }) unless refname !~ /^refs\/heads\// || entries.detect{|entry| entry.name == refname}
                 end
               end
             end
@@ -216,6 +216,7 @@ module Redmine
               if e =~ /^([0-9a-f]{40})\s+\w+\s+(.+)$/
                 sha = $1
                 refname = $2
+                next if refname !~ /^refs\/heads\//
 
                 cmd = "#{GIT_BIN} --git-dir #{target('')} log --raw --date=iso --pretty=fuller"
                 cmd << " --reverse" if options[:reverse]
