@@ -1,0 +1,6 @@
+From: Wang Sheng <wangsheng@bj.ossxp.com>
+Subject: [PATCH] t/phusion_passenger
+
+public/.htaccess conflict with apache + passenger.
+
+Signed-off-by: Wang Sheng <wangsheng@bj.ossxp.com>
