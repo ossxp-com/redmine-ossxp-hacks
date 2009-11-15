@@ -582,6 +582,11 @@ label_incoming_emails: 接收邮件
 label_generate_key: 生成一个key
 label_issue_watchers: 跟踪者
 label_example: 示例
+label_sso_enabled: 启用单点登录
+label_sso_login_url: 登录URL
+label_sso_logout_url: 退出URL
+label_sso_service_name: 单点登录服务名
+label_enabled: 启用
 
 button_login: 登录
 button_submit: 提交

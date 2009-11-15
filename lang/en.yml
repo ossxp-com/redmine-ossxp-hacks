@@ -584,6 +584,11 @@ label_incoming_emails: Incoming emails
 label_generate_key: Generate a key
 label_issue_watchers: Watchers
 label_example: Example
+label_sso_enabled: Single Sign-on
+label_sso_login_url: SSO login url 
+label_sso_logout_url: SSO logout url 
+label_sso_service_name: SSO service name
+label_enabled: enabled
 
 button_login: Login
 button_submit: Submit
