@@ -582,6 +582,11 @@ label_incoming_emails: 傳入的電子郵件
 label_generate_key: 產生金鑰
 label_issue_watchers: 觀察者
 label_example: 範例
+label_sso_enabled: 启用单点登录
+label_sso_login_url: 登录URL
+label_sso_logout_url: 退出URL
+label_sso_service_name: 单点登录服务名
+label_enabled: 启用
 
 button_login: 登入
 button_submit: 送出
@@ -698,6 +703,6 @@ default_activity_development: 開發
 enumeration_issue_priorities: 項目優先權
 enumeration_doc_categories: 文件分類
 enumeration_activities: 活動 (時間追蹤)
-text_plugin_assets_writable: Plugin assets directory writable
-warning_attachments_not_saved: "%d file(s) could not be saved."
-button_create_and_continue: Create and continue
+text_plugin_assets_writable: 插件目录可修改
+warning_attachments_not_saved: "%d 个文件不能被保存。"
+button_create_and_continue: 创建并继续
