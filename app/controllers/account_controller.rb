@@ -41,12 +41,43 @@ class AccountController < ApplicationController
 
   # Login request and validation
   def login
-    if request.get?
+    sso_enabled = Setting.sso_enabled == '1' && AuthSource.count > 0
+    sso_loggedin = sso_enabled && request.env.has_key?("REMOTE_USER") && request.env.has_key?("COSIGN_SERVICE") 
+
+    if request.get? && !sso_loggedin
       # Logout user
       self.logged_user = nil
+
+      if sso_enabled
+        ## make a 125 digits hash
+        sample_string = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        hash = ''
+        srand
+        for i in 0...125
+            hash << sample_string[rand(sample_string.size)]
+        end
+
+        ## Set cookie
+        cookies["cosign-#{Setting.sso_service_name}"] = { :value => hash, :expires => 1.day.from_now }
+
+        ## Redirect back to login again after single sign-on, to setup user sessions.
+        back_url = url_for(:action => 'login')
+        dest_url = "#{Setting.sso_login_url}?cosign-#{Setting.sso_service_name}=#{hash};&#{back_url}"
+
+        ## Do redirect
+        redirect_to(dest_url) && return
+      end
     else
       # Authenticate user
-      user = User.try_to_login(params[:username], params[:password])
+      if sso_loggedin
+        username = request.env["REMOTE_USER"]
+        password = ""
+      else
+        username = params[:username]
+        password = params[:password]
+      end
+
+      user = User.try_to_login(username, password, sso_loggedin)
       if user.nil?
         # Invalid credentials
         flash.now[:error] = l(:notice_account_invalid_creditentials)
@@ -74,7 +105,13 @@ class AccountController < ApplicationController
     cookies.delete :autologin
     Token.delete_all(["user_id = ? AND action = ?", User.current.id, 'autologin']) if User.current.logged?
     self.logged_user = nil
-    redirect_to home_url
+    sso_loggedin = request.env.has_key?("REMOTE_USER") || request.env.has_key?("COSIGN_SERVICE") 
+    if sso_loggedin and Setting.sso_logout_url
+      cookies["cosign-#{Setting.sso_service_name}"] = { :value => "", :expires => 1.year.ago}
+      redirect_to "#{Setting.sso_logout_url}?#{home_url}"
+    else
+      redirect_to home_url
+    end
   end
   
   # Enable user to choose a new password

@@ -22,7 +22,7 @@ class AuthSource < ActiveRecord::Base
   validates_uniqueness_of :name
   validates_length_of :name, :maximum => 60
 
-  def authenticate(login, password)
+  def authenticate(login, password, sso_loggedin=false)
   end
   
   def test_connection
@@ -33,11 +33,11 @@ class AuthSource < ActiveRecord::Base
   end
 
   # Try to authenticate a user not yet registered against available sources
-  def self.authenticate(login, password)
+  def self.authenticate(login, password, sso_loggedin=false)
     AuthSource.find(:all, :conditions => ["onthefly_register=?", true]).each do |source|
       begin
         logger.debug "Authenticating '#{login}' against '#{source.name}'" if logger && logger.debug?
-        attrs = source.authenticate(login, password)
+        attrs = source.authenticate(login, password, sso_loggedin)
       rescue => e
         logger.error "Error during authentication: #{e.message}"
         attrs = nil

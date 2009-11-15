@@ -17,6 +17,24 @@
 
 <p><label><%= l(:label_password_lost) %></label>
 <%= check_box_tag 'settings[lost_password]', 1, Setting.lost_password? %><%= hidden_field_tag 'settings[lost_password]', 0 %></p>
+
+<hr>
+
+<p><label><%= l(:label_sso_enabled) %></label>
+<%= select_tag 'settings[sso_enabled]',
+      options_for_select( [[l(:label_disabled), "0"],
+                           [l(:label_enabled), "1"],
+                          ], Setting.sso_enabled ) %></p>
+
+<p><label><%= l(:label_sso_login_url) %></label>
+<%= text_field_tag 'settings[sso_login_url]', Setting.sso_login_url, :size => 30 %></p>
+
+<p><label><%= l(:label_sso_logout_url) %></label>
+<%= text_field_tag 'settings[sso_logout_url]', Setting.sso_logout_url, :size => 30 %></p>
+
+<p><label><%= l(:label_sso_service_name) %></label>
+<%= text_field_tag 'settings[sso_service_name]', Setting.sso_service_name, :size => 30 %></p>
+
 </div>
 
 <div style="float:right;">

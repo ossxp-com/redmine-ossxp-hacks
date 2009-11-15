@@ -1,0 +1,6 @@
+From: Jiang Xin <worldhello.net@gmail.com>
+Subject: [PATCH] t/single_signon
+
+Cosign single signon support.
+
+Signed-off-by: Jiang Xin <worldhello.net@gmail.com>
