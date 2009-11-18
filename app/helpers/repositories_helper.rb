@@ -153,7 +153,8 @@ module RepositoriesHelper
                                            :value => ((repository.new_record? || repository.password.blank?) ? '' : ('x'*15)),
                                            :onfocus => "this.value=''; this.name='repository[password]';",
                                            :onchange => "this.name='repository[password]';")) +
-      content_tag('p', form.text_field(:authz_file, :size => 60))
+      content_tag('p', form.text_field(:authz_file, :size => 60)) +
+      content_tag('p', form.text_field(:authz_module_name, :size => 30))
   end
 
   def darcs_field_tags(form, repository)

@@ -47,14 +47,19 @@ module Redmine
           end
         end
                 
-        def initialize(url, root_url=nil, login=nil, password=nil, authz_file=nil)
+        def initialize(url, root_url=nil, login=nil, password=nil, authz_file=nil, authz_module_name=nil)
           @url = url
           @login = login if login && !login.empty?
           @password = (password || "") if @login
           @root_url = root_url.blank? ? retrieve_root_url : root_url
-	  @authz_file = authz_file
+          @authz_file = authz_file
+          @authz_module_name = authz_module_name
         end
         
+        def authz_file_enabled?
+          !@authz_file.empty?
+        end
+
         def adapter_name
           'Abstract'
         end
