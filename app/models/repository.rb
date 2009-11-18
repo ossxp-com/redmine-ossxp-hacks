@@ -38,7 +38,7 @@ class Repository < ActiveRecord::Base
   end
 
   def scm
-    @scm ||= self.scm_adapter.new url, root_url, login, password, authz_file
+    @scm ||= self.scm_adapter.new url, root_url, login, password, authz_file, authz_module_name
     update_attribute(:root_url, @scm.root_url) if root_url.blank?
     @scm
   end

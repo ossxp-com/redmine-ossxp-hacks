@@ -16,6 +16,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 require 'redmine/scm/adapters/abstract_adapter'
+require 'redmine/scm/authz/svn_authz'
 require 'rexml/document'
 require 'uri'
 
@@ -44,6 +45,10 @@ module Redmine
             return nil if $? && $?.exitstatus != 0
             version
           end
+        end
+        
+        def authorizer(authz_file, authz_module_name)
+          SvnAuthorizer.new authz_file, authz_module_name
         end
         
         # Get info about the svn repository
@@ -79,6 +84,7 @@ module Redmine
           entries = Entries.new
           cmd = "#{SVN_BIN} list --xml #{target(URI.escape(path))}@#{identifier}"
           cmd << credentials_string
+          puts ("xxxxxxxxxxx command: #{cmd}")
           shellout(cmd) do |io|
             output = io.read
             begin
@@ -89,8 +95,10 @@ module Redmine
                 # Skip directory if there is no commit date (usually that
                 # means that we don't have read access to it)
                 next if entry.attributes['kind'] == 'dir' && commit_date.nil?
-                ###### TODO
                 name = entry.elements['name'].text
+                puts "haha #{path}" if @authz
+                puts "haha,, #{path + '/' + entry.elements['name'].text}" if @authz
+                next if @authz && !@authz.has_permission(path, entry.elements['name'].text)
                 entries << Entry.new({:name => URI.unescape(name),
                             :path => ((path.empty? ? "" : "#{path}/") + name),
                             :kind => entry.attributes['kind'],
