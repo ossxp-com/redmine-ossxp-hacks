@@ -1,0 +1,6 @@
+From: Wang Sheng <wangsheng@bj.ossxp.com>
+Subject: [PATCH] t/svn_authz
+
+为 Subversion 增加基于路径的授权
+
+Signed-off-by: Wang Sheng <wangsheng@bj.ossxp.com>
