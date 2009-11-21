@@ -16,7 +16,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 require 'redmine/scm/adapters/abstract_adapter'
-require 'redmine/scm/authz/svn_authz'
+require 'redmine/scm/authz/svn_authorizer'
 require 'rexml/document'
 require 'uri'
 
@@ -48,7 +48,7 @@ module Redmine
         end
         
         def authorizer(authz_file, authz_module_name)
-          SvnAuthorizer.new authz_file, authz_module_name
+          SvnAuthorizer.new authz_file, authz_module_name,User.current.login
         end
         
         # Get info about the svn repository
@@ -84,7 +84,6 @@ module Redmine
           entries = Entries.new
           cmd = "#{SVN_BIN} list --xml #{target(URI.escape(path))}@#{identifier}"
           cmd << credentials_string
-          puts ("xxxxxxxxxxx command: #{cmd}")
           shellout(cmd) do |io|
             output = io.read
             begin
@@ -92,13 +91,11 @@ module Redmine
               doc.elements.each("lists/list/entry") do |entry|
                 commit = entry.elements['commit']
                 commit_date = commit.elements['date']
+                name = entry.elements['name'].text
                 # Skip directory if there is no commit date (usually that
                 # means that we don't have read access to it)
                 next if entry.attributes['kind'] == 'dir' && commit_date.nil?
-                name = entry.elements['name'].text
-                puts "haha #{path}" if @authz
-                puts "haha,, #{path + '/' + entry.elements['name'].text}" if @authz
-                next if @authz && !@authz.has_permission(path, entry.elements['name'].text)
+                next if !@authz.has_permission?(path + '/' + name)
                 entries << Entry.new({:name => URI.unescape(name),
                             :path => ((path.empty? ? "" : "#{path}/") + name),
                             :kind => entry.attributes['kind'],
