@@ -706,3 +706,6 @@ enumeration_activities: 活动（时间跟踪）
 text_plugin_assets_writable: 插件目录可修改
 warning_attachments_not_saved: "%d 个文件不能被保存。"
 button_create_and_continue: 创建并继续
+field_authz_file: 授权文件
+field_authz_module_name: 授权模块名称
+
