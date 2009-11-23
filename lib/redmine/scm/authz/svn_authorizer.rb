@@ -12,7 +12,7 @@ class SvnAuthorizer
   end
 
   def has_permission?(path=nil)
-    #when @authz_file is empty string,meanning user current redmine authority policy
+    #when @authz_file is empty string,meanning use current redmine authority policy
     return true if @authz_file.empty?
     #when @authz_file isn't empty string,but inifile match empty,meanning authz file path wrong
     return false if @conf_authz.to_s.empty?
@@ -167,6 +167,29 @@ class SvnAuthorizer
 
   def get_permission(section, subject)
     return get(section, subject).include?('r') if has_option?(section,subject)
+  end
+
+  def child_has_permission?(path=nil)
+    #when @authz_file isn't empty string,but inifile match empty,meanning authz file path wrong
+    return false if @conf_authz.to_s.empty?
+
+    return false if path.nil? || path.empty?
+
+    child_path = []
+    @conf_authz.sections.each do |section|
+      if section =~ /#{path}\/.+/
+        temp = section.split(':')
+        temp = temp.size == 2 ? temp[1] : section
+        child_path << temp
+      end
+    end
+
+    for p in child_path
+      return true if has_permission?(p)
+    end
+
+    return false
+
   end
 
   def has_option?(section, subject)

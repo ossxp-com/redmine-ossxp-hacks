@@ -95,7 +95,9 @@ module Redmine
                 # Skip directory if there is no commit date (usually that
                 # means that we don't have read access to it)
                 next if entry.attributes['kind'] == 'dir' && commit_date.nil?
-                next if !@authz.has_permission?(path + '/' + name)
+                if !@authz.has_permission?(path + '/' + name)
+                  next if !@authz.child_has_permission?(path + '/' +name)
+                end
                 entries << Entry.new({:name => URI.unescape(name),
                             :path => ((path.empty? ? "" : "#{path}/") + name),
                             :kind => entry.attributes['kind'],
