@@ -564,7 +564,7 @@ label_registration_activation_by_email: 通过邮件认证激活帐号
 label_registration_manual_activation: 手动激活帐号
 label_registration_automatic_activation: 自动激活帐号
 label_display_per_page: '每页显示：%s'
-label_age: 年龄
+label_age: 时间
 label_change_properties: 修改属性
 label_general: 一般
 label_more: 更多
