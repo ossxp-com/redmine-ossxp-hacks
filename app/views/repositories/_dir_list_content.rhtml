@@ -11,7 +11,7 @@
                   :condition => "scmEntryClick('#{tr_id}')"%>">&nbsp</span>
 <% end %>
 <%=  link_to h(entry.name),
-          {:action => (entry.is_dir? ? 'browse' : 'changes'), :id => @project, :path => to_path_param(entry.path), :rev => @rev},
+          {:action => (entry.is_dir? ? 'browse' : 'changes'), :id => @project, :path => to_path_param(entry.path), :rev => entry.lastrev.identifier},
           :class => (entry.is_dir? ? 'icon icon-folder' : 'icon icon-file')%>
 </td>
 <td class="size"><%= (entry.size ? number_to_human_size(entry.size) : "?") unless entry.is_dir? %></td>
