@@ -95,7 +95,7 @@ module Redmine
                 # Skip directory if there is no commit date (usually that
                 # means that we don't have read access to it)
                 next if entry.attributes['kind'] == 'dir' && commit_date.nil?
-                if !@authz.has_permission?(path + '/' + name)
+                if @authz && !@authz.has_permission?(path + '/' + name)
                   next if !@authz.child_has_permission?(path + '/' +name)
                 end
                 entries << Entry.new({:name => URI.unescape(name),
@@ -189,9 +189,25 @@ module Redmine
           cmd << " #{target(URI.escape(path))}@#{identifier_from}"
           cmd << credentials_string
           diff = []
+          permission = true
           shellout(cmd) do |io|
             io.each_line do |line|
-              diff << line
+              if @authz
+                if line.start_with?("Index:")
+                  filepath = line.strip[7..-1]
+                  if path != filepath and not path.end_with?("/" + filepath)
+                    filepath = path + "/" + filepath if path
+                  else
+                    filepath = path
+                  end
+                  permission = @authz.has_permission?(filepath)
+                end
+                if permission
+                  diff << line
+                end
+              else
+                diff << line
+              end
             end
           end
           return nil if $? && $?.exitstatus != 0
