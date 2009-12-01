@@ -62,6 +62,10 @@ class Changeset < ActiveRecord::Base
     user || committer.to_s.split('<').first
   end
   
+  def name
+    revision
+  end
+
   def before_create
     self.user = repository.find_committer_user(committer)
   end
