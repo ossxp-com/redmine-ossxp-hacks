@@ -136,6 +136,7 @@ class RepositoriesController < ApplicationController
   
   def revision
     @changeset = @repository.changesets.find_by_revision(@rev)
+    @changeset = @repository.scm.changeset_filter @changeset
     raise ChangesetNotFound unless @changeset
 
     respond_to do |format|
