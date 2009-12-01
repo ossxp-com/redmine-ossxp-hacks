@@ -38,6 +38,7 @@ class ChangeAdapter
 end
 
 class ChangesetAdapter
+
   attr_accessor :repository, :revision, :scmid, :name, :committer, :committed_on, :comments, :previous, :next
   def initialize(repository, revision, previous=nil, thenext=nil)
     self.repository = repository
@@ -53,6 +54,7 @@ class ChangesetAdapter
     @changes = ChangesAdapter.new(revision.paths.collect do |change|
       ChangeAdapter.new(self, revision.identifier, change)
     end)
+    @unauth_path = []
   end
 
   def author
@@ -70,6 +72,15 @@ class ChangesetAdapter
   def changes
     @changes
   end
+
+  def unauth_path=(unauth_path)
+    @unauth_path = unauth_path
+  end
+
+  def unauth_path
+    @unauth_path
+  end
+
 end
 
 

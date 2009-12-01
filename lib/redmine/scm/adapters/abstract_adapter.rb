@@ -62,6 +62,10 @@ module Redmine
         def authorizer(authz_file, authz_module_name)
           nil
         end
+
+        def changeset_filter(changeset)
+          changeset
+        end
         
         def adapter_name
           'Abstract'
