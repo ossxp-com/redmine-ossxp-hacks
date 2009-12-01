@@ -56,6 +56,7 @@ module Redmine
             @authz = nil
           else
             @authz = authorizer(authz_file, authz_module_name)
+          end
         end
         
         def authorizer(authz_file, authz_module_name)
