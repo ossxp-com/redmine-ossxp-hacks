@@ -56,6 +56,7 @@ module RepositoriesHelper
     
     tree = { }
     changes.each do |change|
+      next if @changeset.unauth_path.include? change.path
       p = tree
       dirs = change.path.to_s.split('/').select {|d| !d.blank?}
       dirs.each do |dir|

@@ -243,13 +243,15 @@ module Redmine
         end
         
         def changeset_filter(changeset)
+          unauth_path = []
           if @authz
             changeset.changes.each do |change|
               if !@authz.has_permission?(change.path) && !@authz.child_has_permission?(change.path)
-                changeset.changes.delete(change)
                 changeset.comments = ''
+                unauth_path << change.path
               end
             end
+            changeset.unauth_path= unauth_path
             changeset
           else
             changeset

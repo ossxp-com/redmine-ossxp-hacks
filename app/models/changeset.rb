@@ -23,6 +23,8 @@ class Changeset < ActiveRecord::Base
   has_many :changes, :dependent => :delete_all
   has_and_belongs_to_many :issues
 
+  @unauth_path = []
+
   acts_as_event :title => Proc.new {|o| "#{l(:label_revision)} #{o.revision}" + (o.comments.blank? ? '' : (': ' + o.comments))},
                 :description => :comments,
                 :datetime => :committed_on,
@@ -141,6 +143,14 @@ class Changeset < ActiveRecord::Base
   # Strips and reencodes a commit log before insertion into the database
   def self.normalize_comments(str)
     to_utf8(str.to_s.strip)
+  end
+
+  def unauth_path=(unauth_path)
+    @unauth_path = unauth_path
+  end
+
+  def unauth_path
+    @unauth_path
   end
   
   private
