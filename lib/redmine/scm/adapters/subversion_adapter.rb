@@ -247,6 +247,7 @@ module Redmine
             changeset.changes.each do |change|
               if !@authz.has_permission?(change.path) && !@authz.child_has_permission?(change.path)
                 changeset.changes.delete(change)
+                changeset.comments = ''
               end
             end
             changeset
