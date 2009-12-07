@@ -11,9 +11,9 @@ end
 
 def translate(ref, trans, out)
   if out == trans
-    do_backup_file = TRUE;
+    do_backup_file = TRUE
   else
-    do_backup_file = FALSE;
+    do_backup_file = FALSE
   end
 
   if not File.readable?(ref)
@@ -27,13 +27,13 @@ def translate(ref, trans, out)
     exit 1
   end
 
-  buffers=[]; # data for output file
-  counter_total = 0;
-  counter_new = 0;
-  counter_untrans = 0;
-  counter_trans = 0;
+  buffers=[] # data for output file
+  counter_total = 0
+  counter_new = 0
+  counter_untrans = 0
+  counter_trans = 0
 
-  verbose "===== Start lang_parser =====";
+  verbose "===== Start lang_parser ====="
 
   # read ref file
   ref_lines = File.new(ref).readlines
@@ -117,7 +117,7 @@ def translate(ref, trans, out)
 
   # create backup if defined
   if do_backup_file
-    rename(trans, "#{trans}.bak");
+    File.rename trans, "#{trans}.bak"
   end
 
   # save output
@@ -135,7 +135,7 @@ def translate(ref, trans, out)
   verbose "===== Bye ====="
 end
 
-def usage
+def usage(msg="")
   puts <<END
 Command:
   #{$0} [options...] <translate_file>
@@ -155,6 +155,10 @@ Usage:
   <translate_file>
       Target l10n file.
 END
+  if not msg.none?
+    puts
+    puts msg
+  end
 end
 
 def main
