@@ -3,10 +3,10 @@
 require 'getoptlong'
 
 DEFAULT_REFERENCE="en.yml"
-$opt_verbose = FALSE
+$opt_verbose = 0
 
-def verbose(msg)
-  $stderr.puts msg if $opt_verbose
+def verbose(msg, level=1)
+    $stderr.puts msg if level <= $opt_verbose
 end
 
 def translate(ref, trans, out)
@@ -41,8 +41,8 @@ def translate(ref, trans, out)
   # read language file
   trans_lines = File.new(trans).readlines
 
-  verbose "Reference file lines =#{ref_lines.size}"
-  verbose "Translate file lines =#{trans_lines.size}"
+  verbose "Reference file lines =#{ref_lines.size}", 2
+  verbose "Translate file lines =#{trans_lines.size}", 2
 
   # find end of reference file header  :\s(\d+)\s
   ref_header_size = 0
@@ -50,7 +50,7 @@ def translate(ref, trans, out)
     if line =~ /(^[_#])|(^\s*$)/
       ref_header_size += 1
     else
-      verbose "Ref: End of header is line = #{ref_header_size} "
+      verbose "Ref: End of header is line = #{ref_header_size}", 2
       break
     end
   end
@@ -62,7 +62,7 @@ def translate(ref, trans, out)
       buffers << line.rstrip
       trans_header_size += 1
     else
-      verbose "Trans: End of header is line = #{trans_header_size} "
+      verbose "Trans: End of header is line = #{trans_header_size}", 2
       break
     end
   end
@@ -75,23 +75,25 @@ def translate(ref, trans, out)
 
     # copy empty line
     if ref_lines[i] =~ /^\s*$/
-      verbose "(line #{i}) Empty line"
+      verbose "(line #{i}) Empty line", 3
       buffers << ""
 
     # parse a line with variable definition
     elsif /^([\w]+)\s*:\s*(.*)/.match(ref_lines[i])
       key = $1
+      value = ($2 or "")
       counter_total+=1
       bLocalized = FALSE
       localizedLine = ''
       ref_origin = ref_lines[i].rstrip
 
-      verbose "(line #{i}) Found variable '$#{key}'"
+      verbose "(line #{i}) Found variable '$#{key}'", 3
 
       # get localized value if defined - parse old localized strings
       for k in trans_header_size...trans_lines.size
-        if trans_lines[k] =~ /^#{key}\s*:(.*)$/
-          verbose "Found localized variable on (line #{k}) >>> #{trans_lines[k]}"
+        if trans_lines[k] =~ /^#{key}\s*:\s*(.*)$/
+          trans_value = ($2 or "")
+          verbose "Found localized variable on (line #{k}) >>> #{trans_lines[k]}", 3
           bLocalized = TRUE
           localizedLine = $&
           break
@@ -99,8 +101,8 @@ def translate(ref, trans, out)
       end
 
       if bLocalized
-        verbose "Localization exists #{localizedLine}"
-        if localizedLine.strip == ref_origin.strip
+        verbose "Localization exists #{localizedLine}", 3
+        if value.strip == trans_value.strip and not value.strip.none?
             counter_untrans += 1
         else
             counter_trans += 1
@@ -130,8 +132,8 @@ def translate(ref, trans, out)
     $stdout.puts buffers.join("\n")
   end
 
-  verbose "Completed! The script has parsed #{counter_total} strings and add #{counter_new} new variables."
-  verbose "Un-translate items: #{counter_untrans} , translated items: #{counter_trans}"
+  verbose "Completed! The script has parsed #{counter_total} strings and add #{counter_new} new variables.", 0
+  verbose "Un-translate items: #{counter_untrans} , translated items: #{counter_trans}", 0
   verbose "===== Bye ====="
 end
 
@@ -179,7 +181,7 @@ def main
     when "--output"
       out = arg
     when "--verbose"
-      $opt_verbose = TRUE
+      $opt_verbose += 1
     when "--help"
       usage
       exit 0
