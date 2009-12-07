@@ -1,5 +1,7 @@
 #!/usr/bin/ruby
 
+# lang_parser.rb : rewrite from testlink tl_lang_parser.php
+
 require 'getoptlong'
 
 DEFAULT_REFERENCE="en.yml"
@@ -67,7 +69,7 @@ def translate(ref, trans, out)
     end
   end
 
-  # compile output array based on english file
+  # compile output array based on reference file
   i = ref_header_size-1
   while true
     i += 1
@@ -89,13 +91,13 @@ def translate(ref, trans, out)
 
       verbose "(line #{i}) Found variable '$#{key}'", 3
 
-      # get localized value if defined - parse old localized strings
+      # get localized value if defined - parse trans localized strings
       for k in trans_header_size...trans_lines.size
         if trans_lines[k] =~ /^#{key}\s*:\s*(.*)$/
-          trans_value = ($2 or "")
+          trans_value = ($1 or "")
           verbose "Found localized variable on (line #{k}) >>> #{trans_lines[k]}", 3
           bLocalized = TRUE
-          localizedLine = $&
+          localizedLine = $&.rstrip
           break
         end
       end
@@ -103,7 +105,11 @@ def translate(ref, trans, out)
       if bLocalized
         verbose "Localization exists #{localizedLine}", 3
         if value.strip == trans_value.strip and not value.strip.none?
+            verbose "Not translate: #{ref_origin}"
             counter_untrans += 1
+        elsif value.strip.none?
+            verbose "Blank translate: #{ref_origin}/#{localizedLine} !!!"
+            counter_trans += 1
         else
             counter_trans += 1
         end
