@@ -85,6 +85,8 @@ error_scm_command_failed: "嘗試存取儲存庫時發生錯誤： %s"
 error_scm_annotate: "SCM 儲存庫中無此項目或此項目無法被加註。"
 error_issue_not_found_in_project: '該項目不存在或不屬於此專案'
 
+warning_attachments_not_saved: "%d 个文件不能被保存。"
+
 mail_subject_lost_password: 您的 Redmine 網站密碼
 mail_body_lost_password: '欲變更您的 Redmine 網站密碼, 請點選以下鏈結:'
 mail_subject_register: 啟用您的 Redmine 帳號
@@ -202,8 +204,8 @@ setting_host_name: 主機名稱
 setting_text_formatting: 文字格式
 setting_wiki_compression: 壓縮 Wiki 歷史文章
 setting_feeds_limit: RSS 新聞限制
-setting_autofetch_changesets: 自動取得送交版次
 setting_default_projects_public: 新建立之專案預設為「公開」
+setting_autofetch_changesets: 自動取得送交版次
 setting_sys_api_enabled: 啟用管理版本庫之網頁服務 (Web Service)
 setting_commit_ref_keywords: 送交用於參照項目之關鍵字
 setting_commit_fix_keywords: 送交用於修正項目之關鍵字
@@ -473,7 +475,7 @@ label_sort_higher: 往上移動
 label_sort_lower: 往下移動
 label_sort_lowest: 移動至結尾
 label_roadmap: 版本藍圖
-label_roadmap_due_in: 倒數天數： 
+label_roadmap_due_in: 倒數天數：
 label_roadmap_overdue: %s 逾期
 label_roadmap_no_issues: 此版本尚未包含任何項目
 label_search: 搜尋
@@ -597,6 +599,7 @@ button_check_all: 全選
 button_uncheck_all: 全不選
 button_delete: 刪除
 button_create: 建立
+button_create_and_continue: 创建并继续
 button_test: 測試
 button_edit: 編輯
 button_add: 新增
@@ -668,6 +671,7 @@ text_issues_destroy_confirmation: '確定刪除已選擇的項目？'
 text_select_project_modules: '選擇此專案可使用之模組：'
 text_default_administrator_account_changed: 已變更預設管理員帳號內容
 text_file_repository_writable: 可寫入檔案
+text_plugin_assets_writable: 插件目录可修改
 text_rmagick_available: 可使用 RMagick (選配)
 text_destroy_time_entries_question: 您即將刪除的項目已報工 %.02f 小時. 您的選擇是？
 text_destroy_time_entries: 刪除已報工的時數
@@ -705,6 +709,3 @@ default_activity_development: 開發
 enumeration_issue_priorities: 項目優先權
 enumeration_doc_categories: 文件分類
 enumeration_activities: 活動 (時間追蹤)
-text_plugin_assets_writable: 插件目录可修改
-warning_attachments_not_saved: "%d 个文件不能被保存。"
-button_create_and_continue: 创建并继续

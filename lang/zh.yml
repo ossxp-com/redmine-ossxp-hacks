@@ -85,6 +85,8 @@ error_scm_command_failed: "访问版本库时发生错误：%s"
 error_scm_annotate: "该条目不存在或无法追溯。"
 error_issue_not_found_in_project: '问题不存在或不属于此项目'
 
+warning_attachments_not_saved: "%d 个文件不能被保存。"
+
 mail_subject_lost_password: 您的 %s 密码
 mail_body_lost_password: '请点击以下链接来修改您的密码：'
 mail_subject_register: %s帐号激活
@@ -547,8 +549,8 @@ label_send_test_email: 发送测试邮件
 label_feeds_access_key_created_on: RSS 存取键是在 %s 之前建立的
 label_module_plural: 模块
 label_added_time_by: 由 %s 在 %s 之前添加
-label_updated_time:  更新于 %s 之前
 label_updated_time_by: 由 %s 更新于 %s 之前
+label_updated_time:  更新于 %s 之前
 label_jump_to_a_project: 选择一个项目...
 label_file_plural: 文件
 label_changeset_plural: 变更
@@ -597,6 +599,7 @@ button_check_all: 全选
 button_uncheck_all: 清除
 button_delete: 删除
 button_create: 创建
+button_create_and_continue: 创建并继续
 button_test: 测试
 button_edit: 编辑
 button_add: 新增
@@ -668,14 +671,15 @@ text_issues_destroy_confirmation: '您确定要删除选中的问题吗？'
 text_select_project_modules: '请选择此项目可以使用的模块：'
 text_default_administrator_account_changed: 默认的管理员帐号已改变
 text_file_repository_writable: 文件版本库可修改
+text_plugin_assets_writable: 插件目录可修改
 text_rmagick_available: RMagick 可用（可选的）
 text_destroy_time_entries_question: 您要删除的问题已经上报了 %.02f 小时的工作量。您想进行那种操作？
 text_destroy_time_entries: 删除上报的工作量
 text_assign_time_entries_to_project: 将已上报的工作量提交到项目中
 text_reassign_time_entries: '将已上报的工作量指定到此问题：'
 text_user_wrote: '%s 写到：'
-text_enumeration_category_reassign_to: '将它们关联到新的枚举值：'
 text_enumeration_destroy_question: '%d 个对象被关联到了这个枚举值。'
+text_enumeration_category_reassign_to: '将它们关联到新的枚举值：'
 text_email_delivery_not_configured: "邮件参数尚未配置，因此邮件通知功能已被禁用。\n请在config/email.yml中配置您的SMTP服务器信息并重新启动以使其生效。"
 text_repository_usernames_mapping: "选择或更新与版本库中的用户名对应的Redmine用户。\n版本库中与Redmine中的同名用户将被自动对应。"
 text_diff_truncated: '... 差别内容超过了可显示的最大行数并已被截断'
@@ -705,6 +709,3 @@ default_activity_development: 开发
 enumeration_issue_priorities: 问题优先级
 enumeration_doc_categories: 文档类别
 enumeration_activities: 活动（时间跟踪）
-text_plugin_assets_writable: 插件目录可修改
-warning_attachments_not_saved: "%d 个文件不能被保存。"
-button_create_and_continue: 创建并继续
