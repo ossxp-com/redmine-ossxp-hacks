@@ -79,6 +79,19 @@ class ApplicationHelperTest < HelperTestCase
     to_test.each { |text, result| assert_equal "<p>#{result}</p>", textilizable(text) }
   end
   
+  def test_inline_images_inside_tags
+    raw = <<-RAW
+h1. !foo.png! Heading
+
+Centered image:
+
+p=. !bar.gif!
+RAW
+
+    assert textilizable(raw).include?('<img src="foo.png" alt="" />')
+    assert textilizable(raw).include?('<img src="bar.gif" alt="" />')
+  end
+  
   def test_acronyms
     to_test = {
       'this is an acronym: GPL(General Public License)' => 'this is an acronym: <acronym title="General Public License">GPL</acronym>',
@@ -238,7 +251,29 @@ class ApplicationHelperTest < HelperTestCase
     to_test.each { |text, result| assert_equal result, textilizable(text) }
   end
   
-  def syntax_highlight
+  def test_pre_tags
+    raw = <<-RAW
+Before
+
+<pre>
+<prepared-statement-cache-size>32</prepared-statement-cache-size>
+</pre>
+
+After
+RAW
+
+    expected = <<-EXPECTED
+<p>Before</p>
+<pre>
+&lt;prepared-statement-cache-size&gt;32&lt;/prepared-statement-cache-size&gt;
+</pre>
+<p>After</p>
+EXPECTED
+    
+    assert_equal expected.gsub(%r{[\r\n\t]}, ''), textilizable(raw).gsub(%r{[\r\n\t]}, '')
+  end
+  
+  def test_syntax_highlight
     raw = <<-RAW
 <pre><code class="ruby">
 # Some ruby code here
