@@ -19,10 +19,17 @@ require 'uri'
 require 'cgi'
 
 class ApplicationController < ActionController::Base
+  class MissingSessionSecret < Exception ; end
   layout 'base'
   
   before_filter :user_setup, :check_if_login_required, :set_localization
   filter_parameter_logging :password
+
+  if session.first[:secret].blank?
+    raise MissingSessionSecret, "Missing session secret. Please run 'rake config/initializers/session_store.rb' to generate one"
+  else
+    protect_from_forgery :secret => session.first[:secret]
+  end
   
   include Redmine::MenuManager::MenuController
   helper Redmine::MenuManager::MenuHelper
@@ -82,7 +89,13 @@ class ApplicationController < ActionController::Base
   
   def require_login
     if !User.current.logged?
-      redirect_to :controller => "account", :action => "login", :back_url => url_for(params)
+      # Extract only the basic url parameters on non-GET requests
+      if request.get?
+        url = url_for(params)
+      else
+        url = url_for(:controller => params[:controller], :action => params[:action], :id => params[:id], :project_id => params[:project_id])
+      end
+      redirect_to :controller => "account", :action => "login", :back_url => url
       return false
     end
     true
