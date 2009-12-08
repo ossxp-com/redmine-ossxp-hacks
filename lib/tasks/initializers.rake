@@ -17,6 +17,7 @@ file 'config/initializers/session_store.rb' do
 # you'll be exposed to dictionary attacks.
 ActionController::Base.session = {
   :session_key => '_redmine_session',
+  :session_path => ENV['RAILS_RELATIVE_URL_ROOT'],
   :secret => '#{secret}'
 }
 EOF
