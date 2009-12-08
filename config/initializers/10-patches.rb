@@ -17,4 +17,4 @@ ActiveRecord::Errors.default_error_messages = {
 ActionView::Base.field_error_proc = Proc.new{ |html_tag, instance| "#{html_tag}" }
 
 # the session store
-ActionController::Base.session_options[:tmpdir] = File.join(ENV['RAILS_VAR'], 'sessions') unless !ENV['RAILS_VAR']
+ActionController::Base.session_options[:tmpdir] = ENV['RAILS_VH_SESSIONS'] unless !ENV['RAILS_VH_SESSIONS']

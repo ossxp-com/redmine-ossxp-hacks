@@ -43,7 +43,7 @@ class Attachment < ActiveRecord::Base
                                                         "LEFT JOIN #{Project.table_name} ON #{Document.table_name}.project_id = #{Project.table_name}.id"}
 
   cattr_accessor :storage_path
-  @@storage_path = ENV['RAILS_VAR'] ? File.join(ENV['RAILS_VAR'], 'files') : "#{RAILS_ROOT}/files"
+  @@storage_path = ENV['RAILS_VH_FILES'] ? ENV['RAILS_VH_FILES] : "#{RAILS_ROOT}/files"
   
   def validate
     errors.add_to_base :too_long if self.filesize > Setting.attachment_max_size.to_i.kilobytes

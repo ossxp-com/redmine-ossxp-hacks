@@ -1,7 +1,7 @@
 # Loads action_mailer settings from email.yml
 # and turns deliveries on if configuration file is found
 
-filename = ENV['RAILS_ETC'] ? File.join(ENV['RAILS_ETC'], 'email.yml') : File.join(File.dirname(__FILE__), '..', 'email.yml')
+filename = ENV['RAILS_VH_ETC'] ? File.join(ENV['RAILS_VH_ETC'], 'email.yml') : File.join(File.dirname(__FILE__), '..', 'email.yml')
 if File.file?(filename)
   mailconfig = YAML::load_file(filename)
 

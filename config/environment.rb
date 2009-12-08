@@ -5,12 +5,13 @@
 ENV['RAILS_ENV'] ||= 'production'
 
 # for debian package : setup proper environment variables and paths
-ENV['X_DEBIAN_SITEID'] ||= ''
-if not ENV['X_DEBIAN_SITEID'].nil? and not ENV['X_DEBIAN_SITEID'].none?
-  ENV['RAILS_ETC'] ||= "/opt/redmine/sites/#{ENV['X_DEBIAN_SITEID']}/config"
-  ENV['RAILS_LOG'] ||= "/opt/redmine/sites/#{ENV['X_DEBIAN_SITEID']}/log"
-  ENV['RAILS_VAR'] ||= "/opt/redmine/sites/#{ENV['X_DEBIAN_SITEID']}/var"
-  ENV['RAILS_CACHE'] ||= "/opt/redmine/sites/#{ENV['X_DEBIAN_SITEID']}/cache"
+ENV['X_REDMINE_SITEID'] ||= ''
+if not ENV['X_REDMINE_SITEID'].nil? and not ENV['X_REDMINE_SITEID'].none?
+  ENV['RAILS_VH_ETC'] ||= "/opt/redmine/sites/#{ENV['X_REDMINE_SITEID']}/config"
+  ENV['RAILS_VH_FILES'] ||= "/opt/redmine/sites/#{ENV['X_REDMINE_SITEID']}/files"
+  ENV['RAILS_VH_LOG'] ||= "/opt/redmine/sites/#{ENV['X_REDMINE_SITEID']}/log"
+  ENV['RAILS_VH_CACHE'] ||= "/opt/redmine/sites/#{ENV['X_REDMINE_SITEID']}/cache"
+  ENV['RAILS_VH_SESSIONS'] ||= "/opt/redmine/sites/#{ENV['X_REDMINE_SITEID']}/sessions"
 end
 
 # Specifies gem version of Rails to use when vendor/rails is not present
@@ -45,17 +46,17 @@ Rails::Initializer.run do |config|
   config.action_controller.session_store = :PStore
 
   # log path
-  config.log_path = File.join(ENV['RAILS_LOG'], "#{ENV['RAILS_ENV']}.log") unless !ENV['RAILS_LOG']
+  config.log_path = File.join(ENV['RAILS_VH_LOG'], "#{ENV['RAILS_ENV']}.log") unless !ENV['RAILS_VH_LOG']
 
   # Enable page/fragment caching by setting a file-based store
   # (remember to create the caching directory and make it readable to the application)
   # config.action_controller.fragment_cache_store = :file_store, "#{RAILS_ROOT}/cache"
 
   # the file cache store
-  config.cache_store = :file_store, ENV['RAILS_CACHE'] unless !ENV['RAILS_CACHE']
+  config.cache_store = :file_store, ENV['RAILS_VH_CACHE'] unless !ENV['RAILS_VH_CACHE']
   
   # Set Active Record's database.yml path
-  config.database_configuration_file = File.join(ENV['RAILS_ETC'], 'database.yml') unless !ENV['RAILS_ETC']
+  config.database_configuration_file = File.join(ENV['RAILS_VH_ETC'], 'database.yml') unless !ENV['RAILS_VH_ETC']
   
   # Activate observers that should always be running
   # config.active_record.observers = :cacher, :garbage_collector

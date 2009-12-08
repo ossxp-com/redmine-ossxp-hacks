@@ -20,8 +20,8 @@
 #
 require File.dirname(__FILE__) + "/../config/environment"
 require 'fcgi_handler'
-if ENV['RAILS_LOG']
-  RailsFCGIHandler.process! File.join(ENV['RAILS_LOG'], 'fastcgi.crash.log'), 20 
+if ENV['RAILS_VH_LOG']
+  RailsFCGIHandler.process! File.join(ENV['RAILS_VH_LOG'], 'fastcgi.crash.log'), 20 
 else
   RailsFCGIHandler.process!
 end
