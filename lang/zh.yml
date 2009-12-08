@@ -54,30 +54,30 @@ general_pdf_encoding: gb2312
 general_day_names: 星期一,星期二,星期三,星期四,星期五,星期六,星期日
 general_first_day_of_week: '7'
 
-notice_account_updated: 帐号更新成功
+notice_account_updated: 帐号更新成功。
 notice_account_invalid_creditentials: 无效的用户名或密码
-notice_account_password_updated: 密码更新成功
+notice_account_password_updated: 密码更新成功。
 notice_account_wrong_password: 密码错误
 notice_account_register_done: 帐号创建成功，请使用注册确认邮件中的链接来激活您的帐号。
-notice_account_unknown_email: 未知用户
+notice_account_unknown_email: 未知用户。
 notice_can_t_change_password: 该帐号使用了外部认证，因此无法更改密码。
 notice_account_lost_email_sent: 系统已将引导您设置新密码的邮件发送给您。
 notice_account_activated: 您的帐号已被激活。您现在可以登录了。
-notice_successful_create: 创建成功
-notice_successful_update: 更新成功
-notice_successful_delete: 删除成功
-notice_successful_connection: 连接成功
+notice_successful_create: 创建成功。
+notice_successful_update: 更新成功。
+notice_successful_delete: 删除成功。
+notice_successful_connection: 连接成功。
 notice_file_not_found: 您访问的页面不存在或已被删除。
-notice_locking_conflict: 数据已被另一位用户更新
+notice_locking_conflict: 数据已被另一位用户更新。
 notice_not_authorized: 对不起，您无权访问此页面。
 notice_email_sent: 邮件已成功发送到 %s
 notice_email_error: 发送邮件时发生错误 (%s)
 notice_feeds_access_key_reseted: 您的RSS存取键已被重置。
-notice_failed_to_save_issues: "%d 个问题保存失败（共选择 %d 个问题）：%s."
+notice_failed_to_save_issues: "%d 个问题保存失败（共选择 %d 个问题）：%s。"
 notice_no_issue_selected: "未选择任何问题！请选择您要编辑的问题。"
 notice_account_pending: "您的帐号已被成功创建，正在等待管理员的审核。"
 notice_default_data_loaded: 成功载入默认设置。
-notice_unable_delete_version: 无法删除版本
+notice_unable_delete_version: 无法删除版本。
 
 error_can_t_load_default_data: "无法载入默认设置：%s"
 error_scm_not_found: "版本库中不存在该条目和（或）其修订版本。"
@@ -572,10 +572,10 @@ label_age: 时间
 label_change_properties: 修改属性
 label_general: 一般
 label_more: 更多
-label_scm: SCM
+label_scm: 配置管理软件
 label_plugins: 插件
 label_ldap_authentication: LDAP 认证
-label_downloads_abbr: D/L
+label_downloads_abbr: 下载
 label_optional_description: 可选的描述
 label_add_another_file: 添加其它文件
 label_preferences: 首选项
