@@ -6,7 +6,7 @@ ENV['RAILS_ENV'] ||= 'production'
 
 # for debian package : setup proper environment variables and paths
 ENV['X_REDMINE_SITEID'] ||= ''
-if not ENV['X_REDMINE_SITEID'].nil? and not ENV['X_REDMINE_SITEID'].none?
+if not ENV['X_REDMINE_SITEID'].blank?
   ENV['RAILS_VH_ETC'] ||= "/opt/redmine/sites/#{ENV['X_REDMINE_SITEID']}/config"
   ENV['RAILS_VH_FILES'] ||= "/opt/redmine/sites/#{ENV['X_REDMINE_SITEID']}/files"
   ENV['RAILS_VH_LOG'] ||= "/opt/redmine/sites/#{ENV['X_REDMINE_SITEID']}/log"
