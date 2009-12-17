@@ -137,6 +137,7 @@ class RepositoriesController < ApplicationController
   def revision
     @changeset = @repository.changesets_find_by_revision(@rev)
     @changeset = @repository.scm.changeset_filter @changeset
+    @changeset.unauth_path=[] if @changeset.unauth_path.nil?
     raise ChangesetNotFound unless @changeset
 
     respond_to do |format|

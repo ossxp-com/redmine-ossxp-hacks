@@ -23,8 +23,6 @@ class Changeset < ActiveRecord::Base
   has_many :changes, :dependent => :delete_all
   has_and_belongs_to_many :issues
 
-  @unauth_path = []
-
   acts_as_event :title => Proc.new {|o| "#{l(:label_revision)} #{o.revision}" + (o.comments.blank? ? '' : (': ' + o.comments))},
                 :description => :comments,
                 :datetime => :committed_on,
