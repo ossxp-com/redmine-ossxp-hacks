@@ -1,0 +1,6 @@
+From: Jiang Xin <worldhello.net@gmail.com>
+Subject: [PATCH] t/rails_extensions_bugfix
+
+See #83: 当redmine部署在非根路径下，插件的plugin_assets路径错误
+
+Signed-off-by: Jiang Xin <worldhello.net@gmail.com>
