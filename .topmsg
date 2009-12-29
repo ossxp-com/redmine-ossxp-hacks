@@ -1,0 +1,6 @@
+From: Wang Sheng <wangsheng@bj.ossxp.com>
+Subject: [PATCH] t/add-default-fixed-version
+
+add default fixed_version feature for admin, so admin can setting project dafault fixed_version when project's fixed_version isn't empty.
+
+Signed-off-by: Wang Sheng <wangsheng@bj.ossxp.com>
