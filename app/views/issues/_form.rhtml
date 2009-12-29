@@ -33,7 +33,7 @@
 <% end %>
 <%= content_tag('p', f.select(:fixed_version_id, 
                               (@project.versions.sort.collect {|v| [v.name, v.id]}),
-                              { :include_blank => true })) unless @project.versions.empty? %>
+                              { :include_blank => true, :selected => @project.default_fixed_version })) unless @project.versions.empty? %>
 </div>
 
 <div class="splitcontentright">

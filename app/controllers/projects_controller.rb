@@ -189,6 +189,16 @@ class ProjectsController < ApplicationController
   	end
   end
 
+  # Add default fixed version to @project
+  def add_default_fixed_version
+    fixed_version = params[:fixed_version]
+    @project.default_fixed_version = fixed_version
+    if request.post? and @project.save 
+      flash[:notice] = l(:notice_successful_assign)
+      redirect_to :action => 'settings', :tab => 'versions', :id => @project
+    end
+  end
+
   def add_file
     if request.post?
       container = (params[:version_id].blank? ? @project : @project.versions.find_by_id(params[:version_id]))
