@@ -1,0 +1,7 @@
+From: Wang Sheng <wangsheng@bj.ossxp.com>
+Subject: [PATCH] t/modify_activity_reference_date
+
+By default the activities's reference date is today, so sometime the activities is none.
+This patch modify last activity time as reference date. 
+
+Signed-off-by: Wang Sheng <wangsheng@bj.ossxp.com>
