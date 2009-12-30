@@ -67,6 +67,7 @@ notice_successful_create: Successful creation.
 notice_successful_update: Successful update.
 notice_successful_delete: Successful deletion.
 notice_successful_connection: Successful connection.
+notice_successful_assign: Successful assign the default value of fixed version.
 notice_file_not_found: The page you were trying to access doesn't exist or has been removed.
 notice_locking_conflict: Data has been updated by another user.
 notice_not_authorized: You are not authorized to access this page.
@@ -591,6 +592,7 @@ label_sso_login_url: SSO login url
 label_sso_logout_url: SSO logout url
 label_sso_service_name: SSO service name
 label_enabled: enabled
+label_assign_default_fixed_version: assign the default value of fixed version
 
 button_login: Login
 button_submit: Submit
