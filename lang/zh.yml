@@ -67,7 +67,6 @@ notice_successful_create: 创建成功
 notice_successful_update: 更新成功
 notice_successful_delete: 删除成功
 notice_successful_connection: 连接成功
-notice_successful_assign: 成功指定默认的目标版本
 notice_file_not_found: 您访问的页面不存在或已被删除。
 notice_locking_conflict: 数据已被另一位用户更新
 notice_not_authorized: 对不起，您无权访问此页面。
@@ -583,7 +582,6 @@ label_incoming_emails: 接收邮件
 label_generate_key: 生成一个key
 label_issue_watchers: 跟踪者
 label_example: 示例
-label_assign_default_fixed_version: 指定默认目标版本
 
 button_login: 登录
 button_submit: 提交
