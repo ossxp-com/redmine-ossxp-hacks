@@ -186,6 +186,8 @@ field_searchable: Searchable
 field_default_value: Default value
 field_comments_sorting: Display comments
 field_parent_title: Parent page
+field_authz_file: authz filename
+field_authz_module_name: authz module name
 
 setting_app_title: Application title
 setting_app_subtitle: Application subtitle
@@ -584,6 +586,11 @@ label_incoming_emails: Incoming emails
 label_generate_key: Generate a key
 label_issue_watchers: Watchers
 label_example: Example
+label_sso_enabled: Single Sign-on
+label_sso_login_url: SSO login url
+label_sso_logout_url: SSO logout url
+label_sso_service_name: SSO service name
+label_enabled: enabled
 
 button_login: Login
 button_submit: Submit
