@@ -1,6 +1,6 @@
-From: Jiang Xin <worldhello.net@gmail.com>
-Subject: [PATCH] t/zh_cn_locale
+From: Jiang Xin <jiangxin@ossxp.com>
+Subject: [PATCH] t/locale_appendix
 
-language l10n and more...
+<patch description>
 
-Signed-off-by: Jiang Xin <worldhello.net@gmail.com>
+Signed-off-by: Jiang Xin <jiangxin@ossxp.com>
