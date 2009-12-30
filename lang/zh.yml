@@ -186,8 +186,6 @@ field_searchable: 可用作搜索条件
 field_default_value: 默认值
 field_comments_sorting: 显示注释
 field_parent_title: 上级页面
-field_authz_file: 授权文件
-field_authz_module_name: 授权模组名称
 
 setting_app_title: 应用程序标题
 setting_app_subtitle: 应用程序子标题

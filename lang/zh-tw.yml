@@ -186,8 +186,6 @@ field_searchable: 可用做搜尋條件
 field_default_value: 預設值
 field_comments_sorting: 註解排序
 field_parent_title: 父頁面
-field_authz_file: 授权文件
-field_authz_module_name: 授权模组名称
 
 setting_app_title: 標題
 setting_app_subtitle: 副標題
