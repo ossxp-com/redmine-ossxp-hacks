@@ -50,6 +50,39 @@ module Redmine
         end
                 
         module ClassMethods
+          # Returns recent time of event visible by user
+          def find_recent_time(event_type, user, options)
+            provider_options = activity_provider_options[event_type]
+            raise "#{self.name} can not provide #{event_type} events." if provider_options.nil?
+
+            scope_options = {}
+            cond = ARCondition.new
+            if options[:author]
+              return [] if provider_options[:author_key].nil?
+              cond.add(["#{provider_options[:author_key]} = ?", options[:author].id])
+            end
+            cond.add(Project.allowed_to_condition(user, provider_options[:permission], options)) if provider_options[:permission]
+            scope_options[:conditions] = cond.conditions
+
+            if table_name == "wiki_content_versions"
+              scope_options[:order] = "#{table_name}.updated_on DESC"
+            elsif table_name == "changesets"
+              scope_options[:order] = "#{table_name}.committed_on DESC"
+            else
+              scope_options[:order] = "#{table_name}.created_on DESC"
+            end
+            scope_options[:limit] = 1
+            
+            with_scope(:find => scope_options) do
+              result = find(:all, provider_options[:find_options].dup)
+              if result[0].nil?
+                return nil
+              else
+                result[0].event_date 
+              end
+            end
+          end
+
           # Returns events of type event_type visible by user that occured between from and to
           def find_events(event_type, user, from, to, options)
             provider_options = activity_provider_options[event_type]
@@ -71,7 +104,7 @@ module Redmine
               scope_options[:order] = "#{table_name}.id DESC"
               scope_options[:limit] = options[:limit]
             end
-            
+
             with_scope(:find => scope_options) do
               find(:all, provider_options[:find_options].dup)
             end

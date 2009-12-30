@@ -50,6 +50,7 @@ module Redmine
       # Sets the scope
       # Argument can be :all, :default or an array of event types
       def scope=(s)
+
         case s
         when :all
           @scope = event_types
@@ -65,6 +66,25 @@ module Redmine
         @scope = Redmine::Activity.default_event_types
       end
       
+      # Returns the last activity time
+      def last_activity_time
+        recent_time = []
+        @scope.each do |event_type|
+          constantized_providers(event_type).each do |provider|
+            recent_time << provider.find_recent_time(event_type, @user,@options)
+          end
+        end
+        
+        recent_time.compact!
+        if recent_time.size == 0
+          return nil
+        else
+          recent_time.sort! {|a,b| b <=> a}
+          recent_time[0]
+        end
+
+      end
+
       # Returns an array of events for the given date range
       def events(from = nil, to = nil, options={})
         e = []

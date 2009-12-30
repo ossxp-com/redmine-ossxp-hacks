@@ -235,8 +235,6 @@ class ProjectsController < ApplicationController
       begin; @date_to = params[:from].to_date + 1; rescue; end
     end
 
-    @date_to ||= Date.today + 1
-    @date_from = @date_to - @days
     @with_subprojects = params[:with_subprojects].nil? ? Setting.display_subprojects_issues? : (params[:with_subprojects] == '1')
     @author = (params[:user_id].blank? ? nil : User.active.find(params[:user_id]))
     
@@ -245,6 +243,15 @@ class ProjectsController < ApplicationController
                                                              :author => @author)
     @activity.scope_select {|t| !params["show_#{t}"].nil?}
     @activity.scope = (@author.nil? ? :default : :all) if @activity.scope.empty?
+
+    last_activity_time = @activity.last_activity_time
+    if last_activity_time.nil?
+      @date_to ||= Date.today + 1
+    else
+      @date_to ||= last_activity_time + 1
+    end
+
+    @date_from = @date_to - @days
 
     events = @activity.events(@date_from, @date_to)
     
