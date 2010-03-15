@@ -587,11 +587,12 @@ label_incoming_emails: 接收邮件
 label_generate_key: 生成一个key
 label_issue_watchers: 跟踪者
 label_example: 示例
-label_sso_enabled: 启用单点登录
+label_sso_method: 单点登录模式
+label_sso_cosign_v2: CoSign 2.x 登录模式
+label_sso_cosign_v3: CoSign 3.x 登录模式
 label_sso_login_url: 登录URL
 label_sso_logout_url: 退出URL
 label_sso_service_name: 单点登录服务名
-label_enabled: 启用
 label_assign_default_fixed_version: 指定默认目标版本
 
 button_login: 登录
@@ -655,6 +656,10 @@ text_project_identifier_info: '只允许使用小写字母（a-z），数字和�
 text_caracters_maximum: 最多 %d 个字符。
 text_caracters_minimum: 至少需要 %d 个字符。
 text_length_between: 长度必须在 %d 到 %d 个字符之间。
+text_sso_method_message: <p>这个选项将修改登录模式，它将改变认证方式，会影响所有用户包括你自己。 <br /><strong>错误的设置将会让所有用户无法登录！！！</strong><br />如果您因此而无法登录系统，可以在服务器端本插件目录下创建一个名为 <em>"FALLBACK"</em> 的文件（空文件或者包含 "COSIGN2", "COSIGN3", ...），或者您也可以通过修改数据库恢复原有认证方式。</p>
+text_sso_fallback_disable: <p><strong>单点登录因为文件 '%s' 而禁用。重新启用单点登录，请删除该文件。</strong></p>
+text_sso_fallback_cosign_v2: <p><strong>强行设置为 CoSign 2.x 认证模式。若该模式可以登录，设置为此模式，并删除文件 '%s'。</strong></p>
+text_sso_fallback_cosign_v3: <p><strong>强行设置为 CoSign 3.x 认证模式。若该模式可以登录，设置为此模式，并删除文件 '%s'。</strong></p>
 text_tracker_no_workflow: 此跟踪标签未定义工作流程
 text_unallowed_characters: 非法字符
 text_comma_separated: 可以使用多个值（用逗号,分开）。

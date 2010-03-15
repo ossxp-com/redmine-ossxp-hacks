@@ -587,11 +587,12 @@ label_incoming_emails: Incoming emails
 label_generate_key: Generate a key
 label_issue_watchers: Watchers
 label_example: Example
-label_sso_enabled: Single Sign-on
+label_sso_method: Single Sign-on method
+label_sso_cosign_v2: CoSign 2.x login
+label_sso_cosign_v3: CoSign 3.x login
 label_sso_login_url: SSO login url
 label_sso_logout_url: SSO logout url
 label_sso_service_name: SSO service name
-label_enabled: enabled
 label_assign_default_fixed_version: assign the default value of fixed version
 
 button_login: Login
@@ -655,6 +656,10 @@ text_project_identifier_info: 'Only lower case letters (a-z), numbers and dashes
 text_caracters_maximum: %d characters maximum.
 text_caracters_minimum: Must be at least %d characters long.
 text_length_between: Length between %d and %d characters.
+text_sso_method_message: <p>This option will change the login method and will affect all users including yourself.<br />\n<strong>Bad configuration will ban all users!!!</strong><br />\nIf you are banned cause of the bad cosign sso login configurations,\nsimply create a file named <em>"FALLBACK"</em> in config directory \n(blank file or contains "COSIGN2", "COSIGN3", ...), or modify the database record by hands.</p>
+text_sso_fallback_disable: <p><strong>CoSign SSO login disable by file '%s'. To enable CoSign SSO login, remove that file.</strong></p>
+text_sso_fallback_cosign_v2: <p><strong>Fallback to use CoSign V2 auth mode. If this works, set login method to it and remove the file '%s'.</strong></p>
+text_sso_fallback_cosign_v3: <p><strong>Fallback to use CoSign V3 auth mode. If this works, set login method to it and remove the file '%s'.</strong></p>
 text_tracker_no_workflow: No workflow defined for this tracker
 text_unallowed_characters: Unallowed characters
 text_comma_separated: Multiple values allowed (comma separated).
