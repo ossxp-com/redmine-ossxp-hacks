@@ -26,4 +26,20 @@ module SettingsHelper
             {:name => 'repositories', :partial => 'settings/repositories', :label => :label_repository_plural}
             ]
   end
+  def sso_method_message
+    fallback = AuthSource.sso_get_fallback
+    message = l(:text_sso_method_message)+"\n"
+    case
+    when fallback == 0
+      message += l(:text_sso_fallback_disable)
+    when fallback == 1
+      message += l(:text_sso_fallback_cosign_v2)
+    when fallback == 2
+      message += l(:text_sso_fallback_cosign_v3)
+    end
+    message = "<p>"+message+"</p>"
+  end
+  def real_sso_method
+    AuthSource.real_sso_method
+  end
 end

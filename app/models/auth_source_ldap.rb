@@ -31,8 +31,8 @@ class AuthSourceLdap < AuthSource
     self.port = 389 if self.port == 0
   end
   
-  def authenticate(login, password)
-    return nil if login.blank? || password.blank?
+  def authenticate(login, password, sso_loggedin=false)
+    return nil if login.blank? || password.blank? && !sso_loggedin
     attrs = []
     # get user's DN
     ldap_con = initialize_ldap_con(self.account, self.account_password)
@@ -52,8 +52,10 @@ class AuthSourceLdap < AuthSource
     return nil if dn.empty?
     logger.debug "DN found for #{login}: #{dn}" if logger && logger.debug?
     # authenticate user
-    ldap_con = initialize_ldap_con(dn, password)
-    return nil unless ldap_con.bind
+    if !sso_loggedin
+      ldap_con = initialize_ldap_con(dn, password)
+      return nil unless ldap_con.bind
+    end
     # return user's attributes
     logger.debug "Authentication successful for '#{login}'" if logger && logger.debug?
     attrs    
