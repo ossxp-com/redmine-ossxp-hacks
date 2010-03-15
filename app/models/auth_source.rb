@@ -22,7 +22,7 @@ class AuthSource < ActiveRecord::Base
   validates_uniqueness_of :name
   validates_length_of :name, :maximum => 60
 
-  def authenticate(login, password)
+  def authenticate(login, password, sso_loggedin=false)
   end
   
   def test_connection
@@ -33,11 +33,11 @@ class AuthSource < ActiveRecord::Base
   end
 
   # Try to authenticate a user not yet registered against available sources
-  def self.authenticate(login, password)
+  def self.authenticate(login, password, sso_loggedin=false)
     AuthSource.find(:all, :conditions => ["onthefly_register=?", true]).each do |source|
       begin
         logger.debug "Authenticating '#{login}' against '#{source.name}'" if logger && logger.debug?
-        attrs = source.authenticate(login, password)
+        attrs = source.authenticate(login, password, sso_loggedin)
       rescue => e
         logger.error "Error during authentication: #{e.message}"
         attrs = nil
@@ -45,5 +45,31 @@ class AuthSource < ActiveRecord::Base
       return attrs if attrs
     end
     return nil
+  end
+
+  # Get fallback auth method
+  def self.sso_get_fallback
+    fallback_file = "#{RAILS_ROOT}/config/FALLBACK"
+    return -1 if not File.exists? fallback_file
+    fallback = 0
+    line = ""
+    File.open(fallback_file) do |file|
+      line = file.gets
+      line.strip!.downcase! if line
+    end
+    case
+    when line == "cosign2"
+      fallback = 1
+    when line == "cosign3"
+      fallback = 2
+    end
+    return fallback
+  end
+
+  # Get real sso login method
+  def self.real_sso_method
+    return 0 if AuthSource.count <= 0
+    fallback = self.sso_get_fallback
+    return fallback == -1 ? Setting.sso_method : fallback
   end
 end

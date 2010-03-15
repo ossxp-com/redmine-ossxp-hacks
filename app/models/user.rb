@@ -81,13 +81,13 @@ class User < ActiveRecord::Base
   end
   
   # Returns the user that matches provided login and password, or nil
-  def self.try_to_login(login, password)
+  def self.try_to_login(login, password, sso_loggedin=false)
     # Make sure no one can sign in with an empty password
-    return nil if password.to_s.empty?
+    return nil if password.to_s.empty? && !sso_loggedin
     user = find(:first, :conditions => ["login=?", login])
-    if user
-      # user is already in local database
-      return nil if !user.active?
+    if user && !user.active?
+      return nil
+    elsif user && !sso_loggedin
       if user.auth_source
         # user has an external authentication method
         return nil unless user.auth_source.authenticate(login, password)
@@ -95,9 +95,9 @@ class User < ActiveRecord::Base
         # authentication with local password
         return nil unless User.hash_password(password) == user.hashed_password        
       end
-    else
+    elsif !user
       # user is not yet registered, try to authenticate with available sources
-      attrs = AuthSource.authenticate(login, password)
+      attrs = AuthSource.authenticate(login, password, sso_loggedin)
       if attrs
         user = new(*attrs)
         user.login = login
