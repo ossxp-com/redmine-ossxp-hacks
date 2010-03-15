@@ -47,9 +47,14 @@ class AuthSource < ActiveRecord::Base
     return nil
   end
 
+  # Get fallback file name
+  def self.get_fallback_file_name
+    "#{RAILS_ROOT}/config/FALLBACK"
+  end
+
   # Get fallback auth method
   def self.sso_get_fallback
-    fallback_file = "#{RAILS_ROOT}/config/FALLBACK"
+    fallback_file = self.get_fallback_file_name
     return -1 if not File.exists? fallback_file
     fallback = 0
     line = ""
@@ -70,6 +75,6 @@ class AuthSource < ActiveRecord::Base
   def self.real_sso_method
     return 0 if AuthSource.count <= 0
     fallback = self.sso_get_fallback
-    return fallback == -1 ? Setting.sso_method : fallback
+    return fallback == -1 ? Setting.sso_method.to_i : fallback
   end
 end

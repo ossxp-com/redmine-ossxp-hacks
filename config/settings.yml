@@ -32,6 +32,7 @@ self_registration:
 lost_password:
   default: 1
 sso_method:
+  format: int
   default: 0
 sso_login_url:
   default: ""
