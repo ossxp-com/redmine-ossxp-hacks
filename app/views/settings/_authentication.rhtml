@@ -20,11 +20,13 @@
 
 <hr>
 
-<p><label><%= l(:label_sso_enabled) %></label>
-<%= select_tag 'settings[sso_enabled]',
+<p><label><%= l(:label_sso_method) %></label>
+<%= select_tag 'settings[sso_method]',
       options_for_select( [[l(:label_disabled), "0"],
-                           [l(:label_enabled), "1"],
-                          ], Setting.sso_enabled ) %></p>
+                           [l(:label_sso_cosign_v3), "2"],
+                           [l(:label_sso_cosign_v2), "1"],
+                          ], real_sso_method ) %></p>
+<%= sso_method_message %>
 
 <p><label><%= l(:label_sso_login_url) %></label>
 <%= text_field_tag 'settings[sso_login_url]', Setting.sso_login_url, :size => 30 %></p>

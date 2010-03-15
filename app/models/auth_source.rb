@@ -46,4 +46,30 @@ class AuthSource < ActiveRecord::Base
     end
     return nil
   end
+
+  # Get fallback auth method
+  def self.sso_get_fallback
+    fallback_file = "#{RAILS_ROOT}/config/FALLBACK"
+    return -1 if not File.exists? fallback_file
+    fallback = 0
+    line = ""
+    File.open(fallback_file) do |file|
+      line = file.gets
+      line.strip!.downcase! if line
+    end
+    case
+    when line == "cosign2"
+      fallback = 1
+    when line == "cosign3"
+      fallback = 2
+    end
+    return fallback
+  end
+
+  # Get real sso login method
+  def self.real_sso_method
+    return 0 if AuthSource.count <= 0
+    fallback = self.sso_get_fallback
+    return fallback == -1 ? Setting.sso_method : fallback
+  end
 end

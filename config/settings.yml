@@ -31,7 +31,7 @@ self_registration:
   default: '2'
 lost_password:
   default: 1
-sso_enabled:
+sso_method:
   default: 0
 sso_login_url:
   default: ""

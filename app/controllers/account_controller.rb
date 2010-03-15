@@ -45,14 +45,23 @@ class AccountController < ApplicationController
 
   # Login request and validation
   def login
-    sso_enabled = Setting.sso_enabled == '1' && AuthSource.count > 0
-    sso_loggedin = sso_enabled && request.env.has_key?("REMOTE_USER") && request.env.has_key?("COSIGN_SERVICE") 
+    sso_method = AuthSource.real_sso_method
+    sso_loggedin = sso_method > 0 && request.env.has_key?("REMOTE_USER") && request.env.has_key?("COSIGN_SERVICE")
 
     if request.get? && !sso_loggedin
       # Logout user
       self.logged_user = nil
 
-      if sso_enabled
+      ## Cosign v3
+      if sso_method == 2
+        ## Redirect back to login again after single sign-on, to setup user sessions.
+        back_url = url_for(:action => 'login')
+        dest_url = "#{Setting.sso_login_url}?cosign-#{Setting.sso_service_name}&#{back_url}"
+
+        ## Do redirect
+        redirect_to(dest_url) && return
+      ## Cosign v2
+      elsif sso_method == 1
         ## make a 125 digits hash
         sample_string = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
         hash = ''
