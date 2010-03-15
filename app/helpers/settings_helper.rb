@@ -27,17 +27,17 @@ module SettingsHelper
             ]
   end
   def sso_method_message
+    filename = AuthSource.get_fallback_file_name
     fallback = AuthSource.sso_get_fallback
-    message = l(:text_sso_method_message)+"\n"
+    message = l(:text_sso_method_message, filename)+"\n"
     case
     when fallback == 0
-      message += l(:text_sso_fallback_disable)
+      message += l(:text_sso_fallback_disable, filename)
     when fallback == 1
-      message += l(:text_sso_fallback_cosign_v2)
+      message += l(:text_sso_fallback_cosign_v2, filename)
     when fallback == 2
-      message += l(:text_sso_fallback_cosign_v3)
+      message += l(:text_sso_fallback_cosign_v3, filename)
     end
-    message = "<p>"+message+"</p>"
   end
   def real_sso_method
     AuthSource.real_sso_method
