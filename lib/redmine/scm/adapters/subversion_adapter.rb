@@ -16,6 +16,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 require 'redmine/scm/adapters/abstract_adapter'
+require 'redmine/scm/authz/svn_authorizer'
 require 'rexml/document'
 require 'uri'
 
@@ -44,6 +45,10 @@ module Redmine
             return nil if $? && $?.exitstatus != 0
             version
           end
+        end
+        
+        def authorizer(authz_file, authz_module_name)
+          SvnAuthorizer.new authz_file, authz_module_name,User.current.login
         end
         
         # Get info about the svn repository
@@ -86,10 +91,13 @@ module Redmine
               doc.elements.each("lists/list/entry") do |entry|
                 commit = entry.elements['commit']
                 commit_date = commit.elements['date']
+                name = entry.elements['name'].text
                 # Skip directory if there is no commit date (usually that
                 # means that we don't have read access to it)
                 next if entry.attributes['kind'] == 'dir' && commit_date.nil?
-                name = entry.elements['name'].text
+                if @authz && !@authz.has_permission?(path + '/' + name)
+                  next if !@authz.child_has_permission?(path + '/' +name)
+                end
                 entries << Entry.new({:name => URI.unescape(name),
                             :path => ((path.empty? ? "" : "#{path}/") + name),
                             :kind => entry.attributes['kind'],
@@ -181,9 +189,25 @@ module Redmine
           cmd << " #{target(URI.escape(path))}@#{identifier_from}"
           cmd << credentials_string
           diff = []
+          permission = true
           shellout(cmd) do |io|
             io.each_line do |line|
-              diff << line
+              if @authz
+                if line.start_with?("Index:")
+                  filepath = line.strip[7..-1]
+                  if path != filepath and not path.end_with?("/" + filepath)
+                    filepath = path + "/" + filepath if path
+                  else
+                    filepath = path
+                  end
+                  permission = @authz.has_permission?(filepath)
+                end
+                if permission
+                  diff << line
+                end
+              else
+                diff << line
+              end
             end
           end
           return nil if $? && $?.exitstatus != 0
@@ -218,6 +242,22 @@ module Redmine
           blame
         end
         
+        def changeset_filter(changeset)
+          unauth_path = []
+          if @authz
+            changeset.changes.each do |change|
+              if !@authz.has_permission?(change.path) && !@authz.child_has_permission?(change.path)
+                changeset.comments = ''
+                unauth_path << change.path
+              end
+            end
+            changeset.unauth_path= unauth_path
+            changeset
+          else
+            changeset
+          end
+        end
+
         private
         
         def credentials_string

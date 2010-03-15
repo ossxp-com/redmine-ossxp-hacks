@@ -62,6 +62,10 @@ class Changeset < ActiveRecord::Base
     user || committer.to_s.split('<').first
   end
   
+  def name
+    revision
+  end
+
   def before_create
     self.user = repository.find_committer_user(committer)
   end
@@ -137,6 +141,14 @@ class Changeset < ActiveRecord::Base
   # Strips and reencodes a commit log before insertion into the database
   def self.normalize_comments(str)
     to_utf8(str.to_s.strip)
+  end
+
+  def unauth_path=(unauth_path)
+    @unauth_path = unauth_path
+  end
+
+  def unauth_path
+    @unauth_path
   end
   
   private

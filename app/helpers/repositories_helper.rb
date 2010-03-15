@@ -56,6 +56,7 @@ module RepositoriesHelper
     
     tree = { }
     changes.each do |change|
+      next if @changeset.unauth_path.include? change.path
       p = tree
       dirs = change.path.to_s.split('/').select {|d| !d.blank?}
       dirs.each do |dir|
@@ -152,7 +153,9 @@ module RepositoriesHelper
       content_tag('p', form.password_field(:password, :size => 30, :name => 'ignore',
                                            :value => ((repository.new_record? || repository.password.blank?) ? '' : ('x'*15)),
                                            :onfocus => "this.value=''; this.name='repository[password]';",
-                                           :onchange => "this.name='repository[password]';"))
+                                           :onchange => "this.name='repository[password]';")) +
+      content_tag('p', form.text_field(:authz_file, :size => 60)) +
+      content_tag('p', form.text_field(:authz_module_name, :size => 30))
   end
 
   def darcs_field_tags(form, repository)
