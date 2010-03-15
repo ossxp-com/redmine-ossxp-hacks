@@ -38,7 +38,7 @@ class Repository < ActiveRecord::Base
   end
 
   def scm
-    @scm ||= self.scm_adapter.new url, root_url, login, password
+    @scm ||= self.scm_adapter.new url, root_url, login, password, authz_file, authz_module_name
     update_attribute(:root_url, @scm.root_url) if root_url.blank?
     @scm
   end
@@ -74,9 +74,24 @@ class Repository < ActiveRecord::Base
   def diff(path, rev, rev_to)
     scm.diff(path, rev, rev_to)
   end
-  
+ 
   # Default behaviour: we search in cached changesets
-  def changesets_for_path(path)
+  def changesets_find_by_revision(rev)
+    changesets.find_by_revision(rev)
+  end
+
+  # Default behaviour: we search in cached changesets
+  def changesets_find(path, rev, f, options={})
+    changesets.find(f, options)
+  end
+
+  # Default behaviour: we search in cached changesets
+  def changesets_count(path, rev, f)
+    changesets.count
+  end
+
+  # Default behaviour: we search in cached changesets
+  def changesets_for_path(path,options={})
     path = "/#{path}" unless path.starts_with?('/')
     Change.find(:all, :include => {:changeset => :user}, 
       :conditions => ["repository_id = ? AND path = ?", id, path],

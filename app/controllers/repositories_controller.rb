@@ -70,7 +70,7 @@ class RepositoriesController < ApplicationController
     # root entries
     @entries = @repository.entries('', @rev)    
     # latest changesets
-    @changesets = @repository.changesets.find(:all, :limit => 10, :order => "committed_on DESC")
+    @changesets = @repository.changesets_find('', @rev, :all, :limit => 10, :order => "committed_on DESC")
     show_error_not_found unless @entries || @changesets.any?
   end
   
@@ -88,16 +88,16 @@ class RepositoriesController < ApplicationController
   def changes
     @entry = @repository.entry(@path, @rev)
     show_error_not_found and return unless @entry
-    @changesets = @repository.changesets_for_path(@path)
+    @changesets = @repository.changesets_for_path(@path,:branch => @rev)
     @properties = @repository.properties(@path, @rev)
   end
   
   def revisions
-    @changeset_count = @repository.changesets.count
+    @changeset_count = @repository.changesets_count(@path, @rev, :all)
     @changeset_pages = Paginator.new self, @changeset_count,
 								      per_page_option,
 								      params['page']								
-    @changesets = @repository.changesets.find(:all,
+    @changesets = @repository.changesets_find(@path, @rev, :all,
 						:limit  =>  @changeset_pages.items_per_page,
 						:offset =>  @changeset_pages.current.offset,
             :include => :user)
@@ -135,7 +135,9 @@ class RepositoriesController < ApplicationController
   end
   
   def revision
-    @changeset = @repository.changesets.find_by_revision(@rev)
+    @changeset = @repository.changesets_find_by_revision(@rev)
+    @changeset = @repository.scm.changeset_filter @changeset
+    @changeset.unauth_path=[] if @changeset.unauth_path.nil?
     raise ChangesetNotFound unless @changeset
 
     respond_to do |format|
@@ -208,8 +210,9 @@ private
     @path = params[:path].join('/') unless params[:path].nil?
     @path ||= ''
     @rev = params[:rev]
+    @rev = nil if @rev && @rev.blank?
     @rev_to = params[:rev_to]
-    raise InvalidRevisionParam unless @rev.to_s.match(REV_PARAM_RE) && @rev.to_s.match(REV_PARAM_RE)
+    #raise InvalidRevisionParam unless @rev.to_s.match(REV_PARAM_RE) && @rev.to_s.match(REV_PARAM_RE)
   rescue ActiveRecord::RecordNotFound
     render_404
   rescue InvalidRevisionParam
